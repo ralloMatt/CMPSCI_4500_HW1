@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!-- Matt Rallo -->
+<!-- 08/25/17 -->
+<!-- CMP SCI 4500-->
+
+<p>Matt Rallo<br>CS 4500<br>August 25th, 2017</p>
+<h1>Homework 1: A pretty strange game</h1>
+
+<h2 id="results"></h2>
+<h2 id="num_steps"></h2>
+<h2 id="touch_data"></h2>
+
+<h3>Cell Touches:</h3>
+<p id="touches"></p>
+
+<script>
+	/*
+	Matt Rallo
+	CS 4500
+	August 25th, 2017
+	Homework 1
+	
+		The JavaScript code first starts out by making a two dimensional array to keep track of the number of touches for each cell. Each array index corresponds to an “x” and “y” coordinate for the center of each cell. Then a while loop begins and for every loop a direction is randomly selected. Then as each direction is being made I add or subtract to the x and y coordinates and add a touch to the cell corresponding to that coordinate. If I go off the grid, I go back to the previous cell and add a touch. When I’m at the far upper right of the grid x and y should both equal nine and the loop stops. Then I just display the results
+
+	*/
+
+	//since it's a 10 by 10 grid there should be 100 cells
+	//so I'm making a 2d array with 10 rows and 10 columns (to keep trach of touches)
+	var cells = new Array(10);
+	
+	//make a for loop to fill 2d array (array of arrays)
+	for (var i = 0; i < 10; i++){
+		cells[i] = new Array(10);
+	}
+	
+	//fill for loop with zeroes for now (used for number of touches later)
+	for(var i = 0; i < 10; i++){
+		for(var j = 0; j < 10; j++){
+			cells[i][j] = 0;		
+		}	
+	}
+	
+	//number of turns
+	var turns = 0;
+	
+	//x and y coordinates that correspond to the double array
+	// used to determine where we are on the grid
+	var x = 0;
+	var y = 0;
+	
+	//D is the direction, N is the number of steps
+	var D;
+	var N;
+	
+	//result is used to see if you won or not
+	var result;
+	
+	//add a touch to the starting cell
+	cells[0][0] = 1;
+	
+	while(1){
+		//when x and y both equal 9, you win
+		if(x == 9 && y == 9){
+			result = 1;
+			break;
+		}
+		
+		//as we are looping go through each cell while getting random directions
+		
+		//get a random direction by using 4 numbers
+		// 0 is up, 1 is down, 2 is left, 3 is right
+		D = Math.floor(Math.random()*4);
+		
+		//get a random number of steps
+		N = Math.floor(Math.random()*3);
+		
+		//if are we going up
+		if(D == 0){
+			//add to y
+			y = y + N;
+			if(y > 9){
+				//went too far up
+				//go back to original y
+				y = y - N;
+				
+				//add touch
+				cells[x][y] += 1;
+			}
+			else {
+				//we still on grid
+				//add touch
+				cells[x][y] += 1;
+			}
+		}
+		
+		//if are we going down
+		if(D == 1){
+			//subtract to y
+			y = y - N;
+			if(y < 0){
+				//went too far down
+				//go back to original y
+				y = y + N;
+				
+				//add touch
+				cells[x][y] += 1;
+			}
+			else {
+				//we still on grid
+				//add touch
+				cells[x][y] += 1;
+			}
+		}
+		
+		//if are we going left
+		if(D == 2){
+			//subtract to x
+			x = x - N;
+			if(x < 0){
+				//went too far left
+				//go back to original x
+				x = x + N;
+				
+				//add touch
+				cells[x][y] += 1;
+			}
+			else {
+				//we still on grid
+				//add touch
+				cells[x][y] += 1;
+			}
+		
+		}
+		
+		//if are we going right
+		if(D == 3){
+			//add to x
+			x = x + N;
+			if(x > 9){
+				//went too far right
+				//go back to original x
+				x = x - N;
+				
+				//add touch
+				cells[x][y] += 1;
+			}
+			else {
+				//we still on grid
+				//add touch
+				cells[x][y] += 1;
+			}
+		}
+		
+		//if we looped over one million times, you lose!
+		if(turns > 1000000){
+			result = -1;
+			break;
+		}
+		turns++;
+	
+	} //end of while loop
+	
+	// you won
+	if(result == 1){
+		document.getElementById("results").innerHTML = "WINNER!!!";
+	}
+	
+	// you lost
+	if(result == -1){
+		document.getElementById("results").innerHTML = "YOU TOOK OVER 1 MILLION STEPS! <br>YOU RAN OUT OF STEPS!";
+	}
+	
+	//print out the number of steps
+	document.getElementById("num_steps").innerHTML = "You took " + turns + " steps!";
+	
+	//get max, min, and total number of touches
+	var MAX = 0;
+	var MIN = 1000000; //
+	var TOTAL = 0;
+	for(var i = 0; i < 10; i++){
+		for(var j = 0; j < 10; j++){
+			if(cells[i][j] > MAX)
+				MAX = cells[i][j];
+			if(cells[i][j] < MIN)
+				MIN = cells[i][j];
+			TOTAL += cells[i][j];
+		}	
+	}
+	
+	var AVG = TOTAL/100;
+	//print out data
+	document.getElementById("touch_data").innerHTML = "Maximum number of touches: " + MAX + "<br>Minimum number of touches: " + MIN + "<br>Average number of touches: " + AVG;
+	
+	
+	//put touch data information in string form and send to html
+	var touch_data = "";
+	var count = 1;
+	for(var i = 0; i < 10; i++){
+		for(var j = 0; j < 10; j++){
+			touch_data += "Cell " + count + " at (" + i + ", " + j + ") = " + cells[i][j] + "<br>";
+			count++;
+		}	
+	}
+	//print out information in paragraph 
+	document.getElementById("touches").innerHTML = touch_data;
+		
+	
+</script>
+
+</body>
+</html> 
